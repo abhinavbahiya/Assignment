@@ -1,8 +1,7 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import Base64 from 'base-64';
-import Cookies from 'js-cookie';
+//import Base64 from 'base-64';
 
 //import { setDataInCookies } from '.';
 
@@ -15,22 +14,26 @@ class Reminder extends React.Component {
       startDate: moment(),
       Occurences: ['EveryDay', 'EveryMonth', 'EveryYear', 'None'],
       selectedOccurence: '',
-      isNone: false
+      isNone: false,
+      isActive: true
     }
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleNoteChange = this.handleNoteChange.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
-    this.getOccurences = this.getOccurences.bind(this);
     this.handleOccurence = this.handleOccurence.bind(this);
+    this.getOccurences = this.getOccurences.bind(this);
     this.setDataInCookies = this.setDataInCookies.bind(this);
-    this.checkOccurence = this.checkOccurence.bind(this);
+    this.validateFields = this.validateFields.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   };
 
-  // contextTypes : {
-  //   router: React.proptypes.object
-  // }
-  //
+  ComponentWillMount() {
+    // sessionStorage.removeItem('note');
+    // sessionStorage.removeItem('startDate');
+    // sessionStorage.removeItem('selectedOccurence');
+    // Do some coding here
+  }
+
   // contextTypes: {
   //       router: React.PropTypes.object
   //   },
@@ -39,34 +42,32 @@ class Reminder extends React.Component {
   setDataInCookies() {
     // let decoded = Base64.encode(JSON.stringify(sessionData));
     sessionStorage.setItem('note', JSON.stringify(this.state.note));
-    sessionStorage.setItem('lengthRemaining', JSON.stringify(this.state.lengthRemaining));
     sessionStorage.setItem('startDate', JSON.stringify(this.state.startDate));
     sessionStorage.setItem('selectedOccurence', JSON.stringify(this.state.selectedOccurence));
   }
 
-  handleChange(event) {
+  handleNoteChange(event) {
     let text = event.target.value;
     let lengthOfNote = text.length;
     this.setState({
       note: event.target.value,
       lengthRemaining: 100-lengthOfNote
     });
+    this.validateFields();
   }
 
   handleDateChange(date) {
+    console.log(date.toDate());
     this.setState({
       startDate: date
     });
   }
 
-
-
-
   handleSubmit(event) {
     event.preventDefault();
+    this.setDataInCookies();
     // make AJAX call here
     //this.context.router.push('url/here');
-    this.setDataInCookies();
     location.hash = 'showReminder';
   }
 
@@ -77,28 +78,25 @@ class Reminder extends React.Component {
   }
 
   handleOccurence(event) {
-    this.setState({
-      selectedOccurence: event.target.value
-    });
-    console.log(this.refs.dd);
-    debugger;
-    if (event.target.value === 'None') {
-      this.handleDateChange(moment());
-      this.setState({
-        isNone: true
-      });
-    }
-    else {
-      this.setState({
-        isNone: false
-      });
-    }
+      let selectedValue = this.refs.selectInput.value;
+      this.state.selectedOccurence = selectedValue;
+      if (selectedValue === 'None') {
+          this.state.startDate = moment();
+          this.state.isNone = true;
+      }
+      else {
+          this.state.isNone = false;
+      }
+      this.setState(this.state);
+      this.validateFields();
   }
 
-  checkOccurence(event) {
-    debugger;
-
-    return true;
+  validateFields() {
+    if (this.state.note.length && this.state.selectedOccurence.length) {
+        this.setState({
+            isActive: false
+        });
+    }
   }
 
    render() {
@@ -108,26 +106,27 @@ class Reminder extends React.Component {
             <div>
               <label>
                 Note: &nbsp; &nbsp;
-              <input type="text" maxLength="100" value = {this.state.value} onChange = {this.handleChange} />
+              <input type="text" maxLength="100" value = {this.state.value} onChange = {this.handleNoteChange} />
               </label>
              </div>
              <div>
                <label>
-                 Characters Remaining: &nbsp; &nbsp; {this.state.lengthRemaining}
+                 Characters Remaining: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {this.state.lengthRemaining}
                </label>
              </div>
              <div>
-             <label> Date: </label>
+             <label> Date: &nbsp; &nbsp;
+             </label>
              <DatePicker ref = 'datePicker' dateFormat="YYYY/MM/DD" selected = {this.state.startDate} onChange = {this.handleDateChange} disabled = {this.state.isNone} />
              </div>
              <div>
               <label>
-                Occurence: &nbsp; &nbsp;
-                <select onChange = {this.handleOccurence}> <option value="">Select Occurence</option> {this.getOccurences()} </select>
+                Occurence:&nbsp; &nbsp; &nbsp;
+                <select ref="selectInput" onChange={this.handleOccurence}> <option value="">Select Occurence</option> {this.getOccurences()} </select>
               </label>
              </div>
              <div>
-               <input type="submit" value="Submit" />
+               <input type="submit" value="Submit" disabled = {this.state.isActive} />
              </div>
            </form>
         </div>
@@ -136,3 +135,6 @@ class Reminder extends React.Component {
   }
 
 export default Reminder;
+
+
+// className = {this.state.isActive ? 'buttonEnabled' : 'buttonDisabled'}
