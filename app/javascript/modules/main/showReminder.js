@@ -1,4 +1,5 @@
   import React from 'react';
+  import {Link} from 'react-router';
   //import Base64 from 'base-64';
 
   class showReminder extends React.Component {
@@ -34,6 +35,11 @@
           <div>
             Yes!
             {this.showData()}
+            <div>
+              <Link to="NavigationBar">
+                Go to Assignment 2
+              </Link>
+            </div>
           </div>
         );
      }

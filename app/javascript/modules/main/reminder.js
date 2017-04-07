@@ -1,6 +1,7 @@
   import React from 'react';
   import DatePicker from 'react-datepicker';
   import moment from 'moment';
+  import {Link} from 'react-router';
   //import Base64 from 'base-64';
 
   //import { setDataInCookies } from '.';
@@ -102,12 +103,10 @@
      render() {
         return (
           <div>
-             <form onSubmit={this.handleSubmit}>
-              <div>
-                <label>
-                  Note: &nbsp; &nbsp;
-                <input type="text" maxLength="100" value = {this.state.value} onChange = {this.handleNoteChange} />
-                </label>
+             <form className='makeCenter' onSubmit={this.handleSubmit} className="form-inline">
+              <div className="form-group">
+                <label htmlFor="email">  Note: &nbsp; &nbsp;</label>
+                <input id="email" className="form-control" type="text" maxLength="100" value = {this.state.value} onChange = {this.handleNoteChange} />
                </div>
                <div>
                  <label>
@@ -117,7 +116,7 @@
                <div>
                <label> Date: &nbsp; &nbsp;
                </label>
-               <DatePicker ref = 'datePicker' dateFormat="YYYY/MM/DD" selected = {this.state.startDate} onChange = {this.handleDateChange} disabled = {this.state.isNone} />
+               <DatePicker className="form-control" ref = 'datePicker' dateFormat="YYYY/MM/DD" selected = {this.state.startDate} onChange = {this.handleDateChange} disabled = {this.state.isNone} />
                </div>
                <div>
                <label>
@@ -126,15 +125,19 @@
                 </label>
                </div>
                <div>
-                 <input type="submit" value="Submit" disabled = {this.state.isActive} />
+                 <input className='btn-default' type="submit" value="Submit" disabled = {this.state.isActive} />
                </div>
              </form>
+             <div>
+              <Link to="NavigationBar">
+                Go to Assignment 2
+              </Link>
+            </div>
           </div>
         );
       }
     }
 
   export default Reminder;
-
 
   // className = {this.state.isActive ? 'buttonEnabled' : 'buttonDisabled'}
